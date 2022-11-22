@@ -1,6 +1,8 @@
 #ifndef APP_INCLUDE_GLOBAL_TYPES_H_
 #define APP_INCLUDE_GLOBAL_TYPES_H_
 
+#include "main.h"
+
 namespace CliGlobal {
 enum CliContext {
 	CONTEXT_0 = 0,
@@ -20,5 +22,16 @@ enum TempState {
 };
 }
 
+namespace HALWrap {
+struct Gpio {
+	GPIO_TypeDef* gpiox;
+	uint16_t pin;
+};
 
+struct Timer {
+	TIM_HandleTypeDef* htim;
+	uint8_t channel;
+};
+
+}
 #endif /* APP_INCLUDE_GLOBAL_TYPES_H_ */

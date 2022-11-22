@@ -1,0 +1,8 @@
+#ifndef VENDOR_DHT11_DHT_TYPEDEF_H_
+#define VENDOR_DHT11_DHT_TYPEDEF_H_
+
+namespace DHT {
+
+}
+
+#endif /* VENDOR_DHT11_DHT_TYPEDEF_H_ */
