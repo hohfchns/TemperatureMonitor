@@ -14,6 +14,8 @@ public:
 
 	void OnGpioInterrupt(uint16_t pin);
 
+	void _OverrideTemp(double temp);
+
 private:
 	bool HasData();
 

@@ -174,3 +174,9 @@ bool DHT11::HasData()
 
 	return hasData;
 }
+
+
+void DHT11::_OverrideTemp(double temp)
+{
+	_tempLatest = temp;
+}
