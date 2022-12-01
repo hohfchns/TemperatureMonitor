@@ -1,6 +1,12 @@
 #ifndef APP_INCLUDE_GLOBAL_PARAMS_H_
 #define APP_INCLUDE_GLOBAL_PARAMS_H_
 
+#define APP_DEBUG
+
+#define RTC_MAGIC_WORD 0x5ABU
+#define RTC_MAGIC_WORD_ADDR 0x10
+#define RTC_MAGIC_WORD_SIZE 2
+
 namespace ThresholdParams {
 
 enum ThresholdLevel {

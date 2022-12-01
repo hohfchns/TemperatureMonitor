@@ -8,9 +8,5 @@ extern "C" {
 int _write(int fd, char* ptr, int len);
 }
 
-namespace Print {
-	void requestContext(CliGlobal::CliContext context);
-	void enableContext(CliGlobal::CliContext context);
-}
 
 #endif /* APP_INCLUDE_PRINT_EN_H_ */

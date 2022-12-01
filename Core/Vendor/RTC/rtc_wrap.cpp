@@ -4,10 +4,10 @@ using namespace RTCTypes;
 
 namespace RTCWrapper {
 
-const uint32_t DaysInYear    = 365;
-const uint32_t SecondsInMin  = 60;
-const uint32_t SecondsInHour = 3600;
-const uint32_t SecondsInDay  = 86400;
+static const uint32_t DaysInYear    = 365;
+static const uint32_t SecondsInMin  = 60;
+static const uint32_t SecondsInHour = 3600;
+static const uint32_t SecondsInDay  = 86400;
 
 static int bcdToInt(uint8_t bcd);
 static uint8_t intToBcd(int value, int minVal, int maxVal);

@@ -31,6 +31,7 @@ extern "C" {
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#define SD_SPI_HANDLE hspi1
 
 /* USER CODE END Includes */
 
@@ -65,12 +66,8 @@ void Error_Handler(void);
 #define USART_TX_GPIO_Port GPIOA
 #define USART_RX_Pin GPIO_PIN_3
 #define USART_RX_GPIO_Port GPIOA
-#define LD2_Pin GPIO_PIN_5
+#define LD2_Pin GPIO_PIN_12
 #define LD2_GPIO_Port GPIOA
-#define LD3_Pin GPIO_PIN_6
-#define LD3_GPIO_Port GPIOA
-#define TMS_Pin GPIO_PIN_13
-#define TMS_GPIO_Port GPIOA
 #define TCK_Pin GPIO_PIN_14
 #define TCK_GPIO_Port GPIOA
 #define SWO_Pin GPIO_PIN_3
@@ -78,6 +75,8 @@ void Error_Handler(void);
 #define DHT11_Pin GPIO_PIN_5
 #define DHT11_GPIO_Port GPIOB
 #define DHT11_EXTI_IRQn EXTI9_5_IRQn
+#define SD_CS_Pin GPIO_PIN_6
+#define SD_CS_GPIO_Port GPIOB
 /* USER CODE BEGIN Private defines */
 
 /* USER CODE END Private defines */

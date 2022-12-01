@@ -22,7 +22,7 @@ enum TempState {
 };
 }
 
-namespace HALWrap {
+namespace HALWrapper {
 struct Gpio {
 	GPIO_TypeDef* gpiox;
 	uint16_t pin;

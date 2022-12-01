@@ -11,12 +11,26 @@ using namespace SimpleBuzzer;
 namespace AppCommands
 {
 
-BuzzerOn g_buzzerOn;
-BuzzerOff g_buzzerOff;
-DHTRead g_dhtRead;
-DebugDHTOverride g_dhtOverride;
-RTCSetTime g_setRTC;
-RTCGetTime g_getRTC;
+namespace Argument {
+enum FlagType {
+	SHORT,
+	FULL,
+	NONE
+};
+
+}
+
+static bool IsCom(const char* c, const char* c2)
+{
+	return strcmp(c, c2) == 0;
+}
+
+static BuzzerOn g_buzzerOn;
+static BuzzerOff g_buzzerOff;
+static DHTRead g_dhtRead;
+static DebugDHTOverride g_dhtOverride;
+static RTCSetTime g_setRTC;
+static RTCGetTime g_getRTC;
 
 void InitCommands(SimpleBuzzer::Buzzer* buzzer, DHT11* dht, RTCWrapper::RTCW* rtc)
 {
@@ -30,14 +44,45 @@ void InitCommands(SimpleBuzzer::Buzzer* buzzer, DHT11* dht, RTCWrapper::RTCW* rt
 	CMD::RegisterCommand("buzzer-on", &g_buzzerOn);
 	CMD::RegisterCommand("buzzer-off", &g_buzzerOff);
 	CMD::RegisterCommand("get-temp", &g_dhtRead);
-	CMD::RegisterCommand("d_over", &g_dhtOverride);
 	CMD::RegisterCommand("set-rtc", &g_setRTC);
 	CMD::RegisterCommand("get-rtc", &g_getRTC);
+#ifdef APP_DEBUG
+	CMD::RegisterCommand("d_over", &g_dhtOverride);
+#endif
 }
 
 bool HandleCommand(const char* cmd)
 {
 	return CMD::SendCmd(cmd);
+}
+
+static char* getArg(char* command, char* out_Param, char* out_Arg, Argument::FlagType& out_ArgType)
+{
+	static char* token = 0;
+	if (command != NULL){
+		 token = strtok(command, " ");
+		 token = strtok(NULL, "-");
+	}
+	else
+	{
+		 token = strtok(NULL, "-");
+	}
+
+	if (token != NULL)
+	{
+		out_ArgType = Argument::SHORT;
+
+		if (*(token - 2) == '-')
+		{
+			out_ArgType = Argument::FULL;
+		}
+
+		sscanf(token, "%s %s", out_Arg, out_Param);
+		return out_Param;
+	}
+
+	return NULL;
+
 }
 
 BuzzerOn::BuzzerOn() {}
@@ -97,6 +142,29 @@ void DebugDHTOverride::Execute(const char* argv)
 	printf("Dht temperature set to : %d\r\n", (unsigned int)_dht->GetTemp());
 }
 
+static void formatTime(const char* formatted, RTCTypes::DateTime* out_Time)
+{
+	char buffer[30];
+	strcpy(buffer, formatted);
+
+	int* arr[] = {
+			&out_Time->year, &out_Time->month, &out_Time->day, &out_Time->hours, &out_Time->min, &out_Time->sec
+	};
+
+	char* token = strtok(buffer, ":");
+	int i = 0;
+	while (token != NULL)
+	{
+		if (i >= 6) {
+			break;
+		}
+
+		sscanf(token, "%d", arr[i]);
+		token = strtok(NULL, ":");
+		i++;
+	}
+}
+
 RTCSetTime::RTCSetTime(RTCWrapper::RTCW* rtc) :
 		_rtc(rtc)
 {}
@@ -106,35 +174,92 @@ RTCSetTime::RTCSetTime()
 
 void RTCSetTime::Execute(const char* argv)
 {
-	RTCTypes::DateTime dateTime;
-	_rtc->GetTime(&dateTime);
-
-	int* arr[] = {
-			&dateTime.year, &dateTime.month, &dateTime.day, &dateTime.hours, &dateTime.min, &dateTime.sec
-	};
+	RTCTypes::DateTime time;
+	_rtc->GetTime(&time);
 
 	char buffer[30];
 	strcpy(buffer, argv);
-	char* token = strtok(buffer, " ");
 
-	int argc = 0;
-	while (token != NULL)
+	char param[30];
+	char flag[30];
+	char* p = param;
+
+	Argument::FlagType type;
+	p = getArg(buffer, p, flag, type);
+
+	while (p != NULL)
 	{
-		if (argc > 0) {
-			sscanf(token, "%d", arr[argc - 1]);
+		if (type == Argument::SHORT)
+		{
+			switch (*flag) {
+			case 'y':
+				;
+				sscanf(param, "%d", &time.year);
+				break;
+			case 'm':
+				;
+				sscanf(param, "%d", &time.month);
+				break;
+			case 'd':
+				;
+				sscanf(param, "%d", &time.day);
+				break;
+			case 'H':
+				;
+				sscanf(param, "%d", &time.hours);
+				break;
+			case 'M':
+				;
+				sscanf(param, "%d", &time.min);
+				break;
+			case 'S':
+				;
+				sscanf(param, "%d", &time.sec);
+				break;
+			case 'f':
+				;
+				formatTime(param, &time);
+				break;
+			default:
+				break;
+			}
+		}
+		else if (type == Argument::FULL)
+		{
+			if (IsCom(flag, "year"))
+			{
+				sscanf(param, "%d", &time.year);
+			}
+			else if (IsCom(flag, "month"))
+			{
+				sscanf(param, "%d", &time.day);
+			}
+			else if (IsCom(flag, "day"))
+			{
+				sscanf(param, "%d", &time.day);
+			}
+			if (IsCom(flag, "hour"))
+			{
+				sscanf(param, "%d", &time.hours);
+			}
+			else if (IsCom(flag, "minute"))
+			{
+				sscanf(param, "%d", &time.min);
+			}
+			else if (IsCom(flag, "second"))
+			{
+				sscanf(param, "%d", &time.sec);
+			}
+			else if (IsCom(flag, "format"))
+			{
+				formatTime(param, &time);
+			}
 		}
 
-		token = strtok(NULL, ":");
-		argc++;
+		p = getArg(NULL, param, flag, type);
 	}
 
-	if (argc <= 1)
-	{
-		printf("Please provide argument in a format seperation with ':'\r\n");
-		return;
-	}
-
-	_rtc->SetTime(&dateTime);
+	_rtc->SetTime(&time);
 }
 
 RTCGetTime::RTCGetTime(RTCWrapper::RTCW* rtc) :
@@ -146,9 +271,9 @@ RTCGetTime::RTCGetTime()
 
 void RTCGetTime::Execute(const char* argv)
 {
-	RTCTypes::DateTime dateTime;
-	_rtc->GetTime(&dateTime);
-	printf("time is %d:%d:%d:%d:%d:%d\r\n", dateTime.year, dateTime.month, dateTime.day, dateTime.hours, dateTime.min, dateTime.sec);
+	RTCTypes::DateTime out_Time;
+	_rtc->GetTime(&out_Time);
+	printf("time is %d:%d:%d:%d:%d:%d\r\n", out_Time.year, out_Time.month, out_Time.day, out_Time.hours, out_Time.min, out_Time.sec);
 }
 
 }

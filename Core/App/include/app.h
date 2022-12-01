@@ -12,6 +12,8 @@ void mainTask(void* argument);
 void ledTask(void* argument);
 void updateTask(void* argument);
 void buzzerTask(void *argument);
+void osTask(void *argument);
+void flagTask(void* argument);
 }
 
 #endif /* APP_APP_H_ */
