@@ -34,14 +34,14 @@ RTCW::RTCW(I2C_HandleTypeDef * hi2c, uint32_t devAddr) :
 {
 }
 
-void RTCW::Write(uint16_t memAddr, uint8_t * buffer, uint16_t size)
+HAL_StatusTypeDef RTCW::Write(uint16_t memAddr, uint8_t * buffer, uint16_t size)
 {
-	HAL_I2C_Mem_Write(_hi2c, _devAddr, memAddr, 1, buffer, size, 0xFF);
+	return HAL_I2C_Mem_Write(_hi2c, _devAddr, memAddr, 1, buffer, size, 0xFF);
 }
 
-void RTCW::Read(uint16_t memAddr, uint8_t * buffer, uint16_t size)
+HAL_StatusTypeDef RTCW::Read(uint16_t memAddr, uint8_t * buffer, uint16_t size)
 {
-	HAL_I2C_Mem_Read(_hi2c, _devAddr, memAddr, 1, buffer, size, 0xFF);
+	return HAL_I2C_Mem_Read(_hi2c, _devAddr, memAddr, 1, buffer, size, 0xFF);
 }
 
 void RTCW::Start()

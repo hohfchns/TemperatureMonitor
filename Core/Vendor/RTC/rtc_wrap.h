@@ -9,8 +9,8 @@ namespace RTCWrapper {
 class RTCW {
 public:
 	RTCW(I2C_HandleTypeDef * hi2c, uint32_t devAddr);
-	void Write(uint16_t memAddr, uint8_t * buffer, uint16_t size);
-	void Read(uint16_t memAddr, uint8_t * buffer, uint16_t size);
+	HAL_StatusTypeDef Write(uint16_t memAddr, uint8_t * buffer, uint16_t size);
+	HAL_StatusTypeDef Read(uint16_t memAddr, uint8_t * buffer, uint16_t size);
 	void Start();
 	void Stop();
 	int IsRunning();

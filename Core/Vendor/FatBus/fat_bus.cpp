@@ -161,6 +161,8 @@ BusSuccess FBus::FFlush(ID id)
 
 	FIL* fil = &(_handles[id].fil);
 	f_sync(fil);
+
+	return SUCCESS;
 }
 
 }
